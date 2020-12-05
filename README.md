@@ -1,10 +1,11 @@
 # SOCKET HTTP SERVER
 
 Once you're done, you should be able to start the web server inside the homework directory using `python -u http_server.py` and then point your web browser at locations like:
-  * http://localhost:10000/sample.txt
-  * http://localhost:10000/a_web_page.html
-  * http://localhost:10000/images/sample_1.png
-
+  * http://127.0.0.1:10000/webroot/sample.txt
+  * http://127.0.0.1:10000/a_web_page.html
+  * http://127.0.0.1:10000/webroot/images/sample_1.png
+  * http://127.0.0.1:10000/make_time.py
+  * http://127.0.0.1:10000/favicon.ico
 and see the corresponding file located under homework/webroot. Take a moment to look into the homework/webroot and see these files. 
 
 Inside this repository you'll find the http_server.py file. I've added enough stub code for the missing functions to let the server run. And there are more tests for you to make pass!

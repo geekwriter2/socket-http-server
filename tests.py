@@ -1,3 +1,6 @@
+"""test http_server.py"""
+# pylint: disable=C0103
+
 import unittest
 import subprocess
 import http.client
@@ -35,6 +38,37 @@ class WebTestCase(unittest.TestCase):
 
         return response
 
+
+    def test_images_index(self):
+        """
+        A call to /images/ yields a list of files in the images directory
+        """
+
+        directory = 'images'
+        local_path = os.path.join('webroot', directory + '/')
+        web_path = '/' + directory + '/'
+        error_comment = "Error encountered while visiting " + web_path
+
+        response = self.get_response(web_path)
+        body = response.read().decode()
+
+        for path in os.listdir(local_path):
+            self.assertIn(path, body, error_comment)
+
+
+
+    def test_get_404(self):
+        """
+        A call to /asdf.txt (a file which does not exist in webroot) yields a 404 error
+        """
+        file = 'asdf.txt'
+
+        web_path = '/' + file
+        error_comment = "Error encountered while visiting " + web_path
+
+        response = self.get_response(web_path)
+        self.assertEqual(response.getcode(), 404, error_comment)
+
     def test_post_yields_method_not_allowed(self):
         """
         Sending a POST request should yield a 405 Method Not Allowed response
@@ -48,7 +82,6 @@ class WebTestCase(unittest.TestCase):
         conn.close()
 
         self.assertEqual(response.getcode(), 405)
-
 
     def test_get_sample_text_content(self):
         """
@@ -143,54 +176,9 @@ class WebTestCase(unittest.TestCase):
         self.assertEqual(response.getcode(), 200, error_comment)
         self.assertEqual(response.getheader('Content-Type'), 'image/png', error_comment)
 
-    def test_get_404(self):
-        """
-        A call to /asdf.txt (a file which does not exist in webroot) yields a 404 error
-        """
-        file = 'asdf.txt'
-
-        web_path = '/' + file
-        error_comment = "Error encountered while visiting " + web_path
-
-        response = self.get_response(web_path)
-
-        self.assertEqual(response.getcode(), 404, error_comment)
-
-    def test_images_index(self):
-        """
-        A call to /images/ yields a list of files in the images directory
-        """
-
-        directory = 'images'
-        local_path = os.path.join('webroot', directory)
-        web_path = '/' + directory
-        error_comment = "Error encountered while visiting " + web_path
-
-        response = self.get_response(web_path)
-        body = response.read().decode()
-
-        for path in os.listdir(local_path):
-            self.assertIn(path, body, error_comment)
-
-    def test_root_index(self):
-        """
-        A call to / yields a list of files in the images directory
-        """
-
-        directory = ''
-        local_path = os.path.join('webroot', directory)
-        web_path = '/' + directory
-        error_comment = "Error encountered while visiting " + web_path
-
-        response = self.get_response(web_path)
-        body = response.read().decode()
-
-        for path in os.listdir(local_path):
-            self.assertIn(path, body, error_comment)
-
     def test_ok_response_at_root_index(self):
         """
-        A call to / at least yields a 200 OK response 
+        A call to / at least yields a 200 OK response
         """
 
         directory = ''
@@ -199,6 +187,22 @@ class WebTestCase(unittest.TestCase):
         response = self.get_response(web_path)
 
         self.assertEqual(response.getcode(), 200)
+
+    def test_root_index(self):
+        """
+        A call to / yields a list of files in the images directory
+        """
+
+        directory = ''
+        local_path = os.path.join('webroot', directory)
+        web_path = '/' + directory + '/'
+        error_comment = "Error encountered while visiting " + web_path
+
+        response = self.get_response(web_path)
+        body = response.read().decode()
+
+        for path in os.listdir(local_path):
+            self.assertIn(path, body, error_comment)
 
 
 if __name__ == '__main__':
